@@ -6,12 +6,7 @@
 //
 
 public protocol KeychainLogic {
-    // MARK: - Save
-    func save(passwordModel: Password) -> Result<Void, KeychainError>
-    
-    // MARK: - Get
-    func getPasswords(login: String?, host: String?) -> Result<[Password], KeychainError>
-    
-    // MARK: - Delete
-    func deleteAllPasswords() -> Result<Void, KeychainError>
+    func save<T: Item>(_ item: T) -> Result<Void, KeychainError>
+    func getAll<T: Item>() -> Result<[T], KeychainError>
+    func deleteAll<T: Item>(of type: T.Type) -> Result<Void, KeychainError>
 }

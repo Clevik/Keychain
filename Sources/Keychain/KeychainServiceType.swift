@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum KeychainServiceType: String, Codable {
+public enum KeychainServiceType: String, Codable {
     case password
     case userDetails
     case address

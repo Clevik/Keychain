@@ -16,28 +16,7 @@ public final class Keychain: KeychainLogic {
     private init() {}
     
     // MARK: - KeychainLogic
-    public func save(passwordModel: Password) -> Result<Void, KeychainError> {
-        save(passwordModel)
-    }
-    
-    public func getPasswords(login: String? = nil, host: String? = nil) -> Result<[Password], KeychainError> {
-        let result: Result<[Password], KeychainError> = getAll(of: .password)
-        switch result {
-        case .success(let passwords):
-            return .success(
-                passwords.filter { (login == nil || $0.login == login) && (host == nil || $0.host == host) }
-            )
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
-    
-    public func deleteAllPasswords() -> Result<Void, KeychainError> {
-        deleteAll(for: KeychainServiceType.password)
-    }
-    
-    // MARK: - Private Methods
-    private func save(_ item: any Item) -> Result<Void, KeychainError> {
+    public func save<T: Item>(_ item: T) -> Result<Void, KeychainError> {
         let data: Data
         do {
             data = try JSONEncoder().encode(item)
@@ -48,7 +27,7 @@ public final class Keychain: KeychainLogic {
         var error: NSError?
         let success = SAMKeychain.setPasswordData(
             data,
-            forService: KeychainServiceType.password.rawValue,
+            forService: T.self.type.rawValue,
             account: item.id,
             error: &error
         )
@@ -60,9 +39,9 @@ public final class Keychain: KeychainLogic {
         return .success(())
     }
     
-    private func getAll<T: Item>(of type: KeychainServiceType) -> Result<[T], KeychainError>  {
+    public func getAll<T: Item>() -> Result<[T], KeychainError>  {
         var error: NSError?
-        let accounts = SAMKeychain.accounts(forService: type.rawValue, error: &error)
+        let accounts = SAMKeychain.accounts(forService: T.self.type.rawValue, error: &error)
         guard error == nil else { return .failure(.failedToGet(error)) }
         guard let accounts else { return .success([]) }
         var items: [T] = []
@@ -70,7 +49,7 @@ public final class Keychain: KeychainLogic {
         for accountName in accounts.compactMap({ $0["acct"] as? String }) {
             guard
                 let data = SAMKeychain.passwordData(
-                    forService: type.rawValue,
+                    forService: T.self.type.rawValue,
                     account: accountName,
                     error: &error
                 ),
@@ -86,16 +65,16 @@ public final class Keychain: KeychainLogic {
         return .success(items)
     }
     
-    private func deleteAll(for type: KeychainServiceType) -> Result<Void, KeychainError> {
+    public func deleteAll<T: Item>(of type: T.Type) -> Result<Void, KeychainError> {
         var error: NSError?
         guard
-            let accounts = SAMKeychain.accounts(forService: type.rawValue, error: &error)
+            let accounts = SAMKeychain.accounts(forService: type.type.rawValue, error: &error)
         else {
             return .failure(.failedToDelete(error))
         }
         for accountName in accounts.compactMap({ $0["acct"] as? String }) {
             let success = SAMKeychain.deletePassword(
-                forService: type.rawValue,
+                forService: type.type.rawValue,
                 account: accountName,
                 error: &error
             )

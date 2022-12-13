@@ -8,6 +8,8 @@
 import Foundation
 
 public struct Address: Item {
+    public static let type = KeychainServiceType.address
+    
     public let id: String
     public let region: String?
     public let city: String?

@@ -9,4 +9,5 @@ import Foundation
 
 public protocol Item: Codable, Identifiable, Hashable {
     var id: String { get }
+    static var type: KeychainServiceType { get }
 }

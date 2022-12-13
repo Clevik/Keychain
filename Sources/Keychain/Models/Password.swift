@@ -8,6 +8,8 @@
 import Foundation
 
 public struct Password: Item {
+    public static let type = KeychainServiceType.password
+    
     public let id: String
     public let host: String
     public let login: String?
