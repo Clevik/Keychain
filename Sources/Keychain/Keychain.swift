@@ -17,15 +17,23 @@ public final class Keychain: KeychainLogic {
     
     // MARK: - KeychainLogic
     public func save(passwordModel: Password) -> Result<Void, KeychainError> {
-        fatalError() // TODO
+        save(passwordModel)
     }
     
     public func getPasswords(login: String? = nil, host: String? = nil) -> Result<[Password], KeychainError> {
-        fatalError() // TODO
+        let result: Result<[Password], KeychainError> = getAll(of: .password)
+        switch result {
+        case .success(let passwords):
+            return .success(
+                passwords.filter { (login == nil || $0.login == login) && (host == nil || $0.host == host) }
+            )
+        case .failure(let error):
+            return .failure(error)
+        }
     }
     
     public func deleteAllPasswords() -> Result<Void, KeychainError> {
-        fatalError() // TODO
+        deleteAll(for: KeychainServiceType.password)
     }
     
     // MARK: - Private Methods
