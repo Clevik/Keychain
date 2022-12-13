@@ -39,7 +39,14 @@ public final class Keychain: KeychainLogic {
     public func getAll<T: Item>() -> Result<[T], Error> {
         var error: NSError?
         let accounts = SAMKeychain.accounts(forService: T.self.serviceType.rawValue, error: &error)
-        guard error == nil else { return .failure(.failedToGet(error)) }
+        guard error == nil else {
+            switch error?.code {
+            case Int(errSecItemNotFound):
+                return .success([])
+            default:
+                return .failure(.failedToGet(error))
+            }
+        }
         guard let accounts else { return .success([]) }
         var items: [T] = []
         items.reserveCapacity(accounts.count)
@@ -74,7 +81,12 @@ public final class Keychain: KeychainLogic {
         guard
             let accounts = SAMKeychain.accounts(forService: type.serviceType.rawValue, error: &error)
         else {
-            return .failure(.failedToDelete(error))
+            switch error?.code {
+            case Int(errSecItemNotFound):
+                return .success(())
+            default:
+                return .failure(.failedToDelete(error))
+            }
         }
         for accountName in accounts.compactMap({ $0["acct"] as? String }) {
             _ = SAMKeychain.deletePassword(
