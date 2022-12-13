@@ -6,7 +6,8 @@
 //
 
 public protocol KeychainLogic {
-    func save<T: Item>(_ item: T) -> Result<Void, KeychainError>
-    func getAll<T: Item>() -> Result<[T], KeychainError>
-    func deleteAll<T: Item>(of type: T.Type) -> Result<Void, KeychainError>
+    func save<T: Item>(_ item: T) -> Result<Void, Error>
+    func getAll<T: Item>() -> Result<[T], Error>
+    func delete<T: Item>(_ item: T) -> Result<Bool, Error>
+    func deleteAll<T: Item>(of type: T.Type) -> Result<Void, Error>
 }

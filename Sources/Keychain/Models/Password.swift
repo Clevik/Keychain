@@ -8,7 +8,7 @@
 import Foundation
 
 public struct Password: Item {
-    public static let type = KeychainServiceType.password
+    public static let serviceType = ServiceType.password
     
     public let id: String
     public let host: String

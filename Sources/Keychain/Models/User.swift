@@ -8,7 +8,7 @@
 import Foundation
 
 public struct User: Item {
-    public static let type = KeychainServiceType.userDetails
+    public static let serviceType = ServiceType.userDetails
     
     public let id: String
     public let name: String?
