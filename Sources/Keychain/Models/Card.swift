@@ -14,23 +14,15 @@ public struct Card: Item {
     public let name: String?
     public let number: String?
     public let cvv: String?
-    public let expiration: CardExpiration?
+    public let expirationMonth: String?
+    public let expirationYear: String?
     
-    public init(name: String?, number: String?, cvv: String?, expiration: CardExpiration?) {
+    public init(name: String?, number: String?, cvv: String?, expirationMonth: String?, expirationYear: String?) {
         self.id = UUID().uuidString
         self.name = name
         self.number = number
         self.cvv = cvv
-        self.expiration = expiration
-    }
-}
-
-public struct CardExpiration: Codable, Hashable {
-    public let month: String
-    public let year: String
-    
-    public init(month: String, year: String) {
-        self.month = month
-        self.year = year
+        self.expirationMonth = expirationMonth
+        self.expirationYear = expirationYear
     }
 }
