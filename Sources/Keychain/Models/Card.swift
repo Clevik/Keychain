@@ -28,4 +28,9 @@ public struct Card: Item {
 public struct CardExpiration: Codable, Hashable {
     public let month: String
     public let year: String
+    
+    public init(month: String, year: String) {
+        self.month = month
+        self.year = year
+    }
 }
